@@ -1,0 +1,19 @@
+name: protoc_twirp_plugin
+version: 0.0.1
+description: Protoc compiler plugin to generate Dart code and Twirp clients.
+homepage: https://github.com/cheddar-me/twirpd
+
+environment:
+  sdk: '>=2.11.0 <3.0.0'
+
+dependencies:
+  protoc_plugin: ^20.0.0
+  dart_style: ^1.0.6
+  fixnum: '>=0.10.9 <2.0.0'
+
+dev_dependencies:
+  test: ^1.3.0
+
+executables:
+  protoc-gen-dart-twirp: protoc_twirp_plugin
+  

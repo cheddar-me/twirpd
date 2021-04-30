@@ -1,0 +1,14 @@
+name: twirpd
+version: 0.0.1
+description: Dart implementation of Twirp, a simple RPC framework with protobuf service definitions.
+homepage: https://github.com/cheddar-me/twirpd
+
+environment:
+  sdk: '^2.12.0'
+
+dependencies:
+  protobuf: '^2.0.0'
+  http: '^0.13.1'
+
+dev_dependencies:
+  test: '^1.16.6'
