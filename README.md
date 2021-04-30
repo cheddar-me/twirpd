@@ -1,1 +1,2 @@
-# Dart Twirp client and code generator plugin
+# Twirpd
+Twirp client and code generator for Dart
