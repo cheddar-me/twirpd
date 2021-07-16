@@ -55,11 +55,17 @@ class HttpResponseParser {
   }
 
   static Map<String, String>? _extractMetadata(Map<String, dynamic> json) {
-    if (!json.containsKey('meta')) {
-      return {};
-    }
-    if (json['meta'] is Map<String, String>) {
-      return json['meta'];
+    final meta = json['meta'] ?? <String,dynamic>{};
+    if (meta is Map<String, dynamic>) {
+      final metadata = <String,String>{};
+      for (final e in meta.entries) {
+        if (e.value is String) {
+          metadata[e.key] = e.value;
+        } else {
+          return null;
+        }
+      }
+      return metadata;
     }
     return null;
   }
