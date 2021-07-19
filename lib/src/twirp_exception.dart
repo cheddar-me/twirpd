@@ -52,5 +52,5 @@ class TwirpException implements Exception {
             metadata ?? {});
 
   @override
-  String toString() => 'TwirpException: $message';
+  String toString() => 'TwirpException: $message, code: $code, metadata: $metadata';
 }
