@@ -1,12 +1,14 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
 
-import 'twirp_exception.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/retry.dart';
+
 import 'call_options.dart';
 import 'client_interceptor.dart';
 import 'client_method.dart';
 import 'client_options.dart';
 import 'http_response_parser.dart';
+import 'twirp_exception.dart';
 
 class Client {
   final String host;
@@ -56,7 +58,12 @@ class Client {
     final uri = _buildUri(method.path);
     final headers = _buildHeaders(options);
     final body = method.requestSerializer(request);
-    return http
+    return RetryClient(
+      http.Client(),
+      retries: _options.maxRetries,
+      when: _options.whenRetry,
+      delay: _options.retryDelay,
+    )
         .post(uri, headers: headers, body: body)
         .then((response) => _parseResponse(response, method))
         .catchError((e) => throw _wrap(e));
