@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:http/http.dart' as http;
@@ -15,6 +16,12 @@ class ClientOptions {
   final Duration Function(int retryCount) retryDelay;
   final bool Function(http.BaseResponse) whenRetry;
 
+  /// A callback that will decide whether to accept a secure connection
+  /// with a server certificate that cannot be authenticated by any of our
+  /// trusted root certificates.
+  final bool Function(X509Certificate cert, String host, int port)?
+      badCertificateCallback;
+
   const ClientOptions({
     this.credentials = const ClientCredentials.secure(),
     this.prefix = '/twirp',
@@ -22,6 +29,7 @@ class ClientOptions {
     this.maxRetries = 5,
     this.retryDelay = _defaultDelay,
     this.whenRetry = _defaultWhen,
+    this.badCertificateCallback,
   });
 }
 

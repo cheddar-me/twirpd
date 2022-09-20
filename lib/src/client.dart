@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:http/retry.dart';
 
 import 'call_options.dart';
@@ -58,8 +60,11 @@ class Client {
     final uri = _buildUri(method.path);
     final headers = _buildHeaders(options);
     final body = method.requestSerializer(request);
+    final httpClient = HttpClient()
+      ..badCertificateCallback = _options.badCertificateCallback;
+    final ioClient = IOClient(httpClient);
     return RetryClient(
-      http.Client(),
+      ioClient,
       retries: _options.maxRetries,
       when: _options.whenRetry,
       delay: _options.retryDelay,
