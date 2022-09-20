@@ -25,6 +25,12 @@ class ClientOptions {
   });
 }
 
+// Current setup introduces the following delays:
+// 1st retry after 200 ms, in total 200 ms
+// 2nd retry after 400 ms, in total 600 ms
+// 3rd retry after 800 ms, in total 1400 ms
+// 4th retry after 1600 ms, in total 3000 ms
+// 5th retry after 3200 ms, in total 6200 ms
 Duration _defaultDelay(int retryCount) =>
     const Duration(milliseconds: 200) * math.pow(2, retryCount);
 
