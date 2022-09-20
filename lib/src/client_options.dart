@@ -19,7 +19,7 @@ class ClientOptions {
     this.credentials = const ClientCredentials.secure(),
     this.prefix = '/twirp',
     this.userAgent = _defaultUserAgent,
-    this.maxRetries = 4,
+    this.maxRetries = 5,
     this.retryDelay = _defaultDelay,
     this.whenRetry = _defaultWhen,
   });
