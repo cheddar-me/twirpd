@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
@@ -17,18 +16,12 @@ class Client {
 
   final ClientOptions _options;
   final List<ClientInterceptor> _interceptors;
-  final int retries;
-  final Duration Function(int retryCount) retryDelay;
-  final bool Function(http.BaseResponse) whenRetry;
 
   Client(
     this.host, {
     this.port = 443,
     ClientOptions? options,
     Iterable<ClientInterceptor>? interceptors,
-    this.retries = 4,
-    this.retryDelay = _defaultDelay,
-    this.whenRetry = _defaultWhen,
   })  : _options = options ?? const ClientOptions(),
         _interceptors = List.unmodifiable(interceptors ?? Iterable.empty());
 
@@ -67,9 +60,9 @@ class Client {
     final body = method.requestSerializer(request);
     return RetryClient(
       http.Client(),
-      retries: retries,
-      when: whenRetry,
-      delay: retryDelay,
+      retries: _options.maxRetries,
+      when: _options.whenRetry,
+      delay: _options.retryDelay,
     )
         .post(uri, headers: headers, body: body)
         .then((response) => _parseResponse(response, method))
@@ -118,9 +111,3 @@ class Client {
     return TwirpException.internal(e.toString());
   }
 }
-
-Duration _defaultDelay(int retryCount) =>
-    const Duration(milliseconds: 200) * math.pow(2, retryCount);
-
-bool _defaultWhen(http.BaseResponse response) =>
-    response.statusCode == 429 || response.statusCode >= 500;
