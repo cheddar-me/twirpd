@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
-import 'package:http/retry.dart';
 
 import 'call_options.dart';
 import 'client_interceptor.dart';
@@ -18,6 +16,7 @@ class Client {
 
   final ClientOptions _options;
   final List<ClientInterceptor> _interceptors;
+  final http.Client _client;
 
   Client(
     this.host, {
@@ -25,7 +24,8 @@ class Client {
     ClientOptions? options,
     Iterable<ClientInterceptor>? interceptors,
   })  : _options = options ?? const ClientOptions(),
-        _interceptors = List.unmodifiable(interceptors ?? Iterable.empty());
+        _interceptors = List.unmodifiable(interceptors ?? Iterable.empty()),
+        _client = options?.client ?? IOClient();
 
   Future<R> $call<Q, R>(
     ClientMethod<Q, R> method,
@@ -60,15 +60,7 @@ class Client {
     final uri = _buildUri(method.path);
     final headers = _buildHeaders(options);
     final body = method.requestSerializer(request);
-    final httpClient = HttpClient()
-      ..badCertificateCallback = _options.badCertificateCallback;
-    final ioClient = IOClient(httpClient);
-    return RetryClient(
-      ioClient,
-      retries: _options.maxRetries,
-      when: _options.whenRetry,
-      delay: _options.retryDelay,
-    )
+    return _client
         .post(uri, headers: headers, body: body)
         .then((response) => _parseResponse(response, method))
         .catchError((e) => throw _wrap(e));
