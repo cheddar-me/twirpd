@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:math' as math;
-
 import 'package:http/http.dart' as http;
 
 import 'client_credentials.dart';
@@ -12,35 +9,14 @@ class ClientOptions {
   final ClientCredentials credentials;
   final String prefix;
   final String userAgent;
-  final int maxRetries;
-  final Duration Function(int retryCount) retryDelay;
-  final bool Function(http.BaseResponse) whenRetry;
 
-  /// A callback that will decide whether to accept a secure connection
-  /// with a server certificate that cannot be authenticated by any of our
-  /// trusted root certificates.
-  final bool Function(X509Certificate cert, String host, int port)?
-      badCertificateCallback;
+  /// Base client to perform network requests. If null, IOClient is used.
+  final http.Client? baseClient;
 
   const ClientOptions({
     this.credentials = const ClientCredentials.secure(),
     this.prefix = '/twirp',
     this.userAgent = _defaultUserAgent,
-    this.maxRetries = 5,
-    this.retryDelay = _defaultDelay,
-    this.whenRetry = _defaultWhen,
-    this.badCertificateCallback,
+    this.baseClient,
   });
 }
-
-// Current setup introduces the following delays:
-// 1st retry after 200 ms, in total 200 ms
-// 2nd retry after 400 ms, in total 600 ms
-// 3rd retry after 800 ms, in total 1400 ms
-// 4th retry after 1600 ms, in total 3000 ms
-// 5th retry after 3200 ms, in total 6200 ms
-Duration _defaultDelay(int retryCount) =>
-    const Duration(milliseconds: 200) * math.pow(2, retryCount);
-
-bool _defaultWhen(http.BaseResponse response) =>
-    response.statusCode == 429 || response.statusCode >= 500;
