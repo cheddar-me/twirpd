@@ -16,6 +16,7 @@ class Client {
 
   final ClientOptions _options;
   final List<ClientInterceptor> _interceptors;
+  final http.Client _client;
 
   Client(
     this.host, {
@@ -23,7 +24,8 @@ class Client {
     ClientOptions? options,
     Iterable<ClientInterceptor>? interceptors,
   })  : _options = options ?? const ClientOptions(),
-        _interceptors = List.unmodifiable(interceptors ?? Iterable.empty());
+        _interceptors = List.unmodifiable(interceptors ?? Iterable.empty()),
+        _client = options?.client ?? IOClient();
 
   Future<R> $call<Q, R>(
     ClientMethod<Q, R> method,
@@ -58,8 +60,7 @@ class Client {
     final uri = _buildUri(method.path);
     final headers = _buildHeaders(options);
     final body = method.requestSerializer(request);
-    final client = _options.baseClient ?? IOClient();
-    return client
+    return _client
         .post(uri, headers: headers, body: body)
         .then((response) => _parseResponse(response, method))
         .catchError((e) => throw _wrap(e));

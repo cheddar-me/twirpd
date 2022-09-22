@@ -11,12 +11,12 @@ class ClientOptions {
   final String userAgent;
 
   /// Base client to perform network requests. If null, IOClient is used.
-  final http.Client? baseClient;
+  final http.Client? client;
 
   const ClientOptions({
     this.credentials = const ClientCredentials.secure(),
     this.prefix = '/twirp',
     this.userAgent = _defaultUserAgent,
-    this.baseClient,
+    this.client,
   });
 }
