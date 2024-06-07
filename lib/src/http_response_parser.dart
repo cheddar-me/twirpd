@@ -106,7 +106,7 @@ class HttpResponseParser {
       case 404:
         return ErrorCode.BadRoute;
       case 429:
-        return ErrorCode.Unavailable;
+        return ErrorCode.ResourceExhausted;
       case 502:
         return ErrorCode.Unavailable;
       case 503:
