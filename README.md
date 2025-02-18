@@ -2,7 +2,7 @@
 
 # Twirpd - Twirp client for Dart
 
-A client implementation of the awesome Twirp Specification written in Dart.
+Dart implementation of Twirp, a simple RPC framework with protobuf service definitions.
 
 ## Getting started
 ### Installation
